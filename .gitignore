@@ -39,3 +39,6 @@ uploads
 
 # .env file
 .env
+
+# build dir
+build
