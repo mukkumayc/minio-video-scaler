@@ -6,7 +6,8 @@ import { cutParentDir } from './utils'
 import videoScaler from './videoScaler'
 
 const uploadHandler =
-	(client: Client) => async (record: NotificationRecord) => {
+	(client: Client, bucketToTransform: string) =>
+	async (record: NotificationRecord) => {
 		const bucketName = record.s3.bucket.name
 		const objectPath = record.s3.object.key
 
@@ -23,7 +24,7 @@ const uploadHandler =
 
 		await Promise.all(
 			processedVideoPaths.map((path) =>
-				client.fPutObject('processed-videos', cutParentDir(path), path, {
+				client.fPutObject(bucketToTransform, cutParentDir(path), path, {
 					'Content-Type': 'video/mp4'
 				})
 			)

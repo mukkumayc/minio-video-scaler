@@ -5,25 +5,32 @@ import uploadHandler from './uploadHandler'
 export function startUploadListener() {
 	const accessKey = process.env['ACCESS_KEY']
 	const secretKey = process.env['SECRET_KEY']
+	const bucketToListen = process.env['BUCKET_TO_UPLOAD']
+	const bucketToTransform = process.env['BUCKET_TO_TRANSFORM']
+	const port = process.env['PORT'] || '9090'
 
 	if (!accessKey || !secretKey) {
 		console.log(process.env)
-		throw new Error('Access keys not provided')
+		throw new Error('Access keys is not provided')
+	}
+
+	if (!bucketToListen || !bucketToTransform) {
+		throw new Error('Buckets is not provided')
 	}
 
 	const client = new minio.Client({
 		endPoint: 'localhost',
-		port: 9000,
+		port: parseInt(port),
 		accessKey,
 		secretKey,
 		useSSL: false
 	})
 
-	const poller = client.listenBucketNotification('uploaded-videos', '', '', [
+	const poller = client.listenBucketNotification(bucketToListen, '', '', [
 		's3:ObjectCreated:*'
 	])
 
-	poller.on('notification', uploadHandler(client))
+	poller.on('notification', uploadHandler(client, bucketToTransform))
 }
 
 startUploadListener()
