@@ -3,8 +3,8 @@ import * as minio from 'minio'
 import uploadHandler from './uploadHandler'
 
 export function startUploadListener() {
-	const accessKey = process.env['ACCESS_KEY']
-	const secretKey = process.env['SECRET_KEY']
+	const accessKey = process.env['MINIO_ACCESS_KEY']
+	const secretKey = process.env['MINIO_SECRET_KEY']
 	const bucketToListen = process.env['BUCKET_TO_UPLOAD']
 	const bucketToTransform = process.env['BUCKET_TO_TRANSFORM']
 	const port = process.env['PORT'] || '9090'
