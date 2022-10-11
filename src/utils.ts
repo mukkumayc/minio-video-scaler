@@ -1,4 +1,4 @@
-import path from "path";
+import path from 'path'
 
 export const cutParentDir = (filepath: string) =>
-	path.join(...filepath.split(path.sep).slice(1));
+	path.join(...filepath.split(path.sep).slice(1))
