@@ -1,9 +1,14 @@
+import { mkdtempSync } from 'fs'
 import * as fs from 'fs/promises'
 import type { Client } from 'minio'
+import { tmpdir } from 'os'
+import path from 'path'
 
 import type NotificationRecord from './NotificationRecord'
 import { cutParentDir } from './utils'
 import videoScaler from './videoScaler'
+
+const tempDir = mkdtempSync(path.join(tmpdir(), 'minio-video-scaler'))
 
 const uploadHandler =
 	(client: Client, bucketToTransform: string) =>
@@ -11,7 +16,7 @@ const uploadHandler =
 		const bucketName = record.s3.bucket.name
 		const objectPath = record.s3.object.key
 
-		const videoPath = `uploads/${objectPath}`
+		const videoPath = `${tempDir}/uploads/${objectPath}`
 
 		await client.fGetObject(bucketName, objectPath, videoPath)
 
