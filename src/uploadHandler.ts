@@ -5,7 +5,6 @@ import { tmpdir } from 'os'
 import path from 'path'
 
 import type NotificationRecord from './NotificationRecord'
-import { cutParentDir } from './utils'
 import videoScaler from './videoScaler'
 
 const tempDir = mkdtempSync(path.join(tmpdir(), 'minio-video-scaler'))
@@ -28,10 +27,15 @@ const uploadHandler =
 		)
 
 		await Promise.all(
-			processedVideoPaths.map((path) =>
-				client.fPutObject(bucketToTransform, cutParentDir(path), path, {
-					'Content-Type': 'video/mp4'
-				})
+			processedVideoPaths.map((videoPath) =>
+				client.fPutObject(
+					bucketToTransform,
+					`${path.dirname(objectPath)}/${path.basename(videoPath)}`,
+					videoPath,
+					{
+						'Content-Type': 'video/mp4'
+					}
+				)
 			)
 		)
 
