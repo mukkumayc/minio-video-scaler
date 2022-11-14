@@ -35,7 +35,7 @@ const uploadHandler =
 			)
 		)
 
-		return fs.rm('uploads', { recursive: true, force: true })
+		return fs.rm(`${tempDir}/uploads`, { recursive: true, force: true })
 	}
 
 export default uploadHandler
