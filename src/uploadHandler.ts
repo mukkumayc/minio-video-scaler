@@ -22,22 +22,24 @@ const uploadHandler =
 		console.log(new Date(), 'Get upload! File:', `${bucketName}/${objectPath}`)
 
 		const resolutions = [240, 360, 480, 720, 1080] as const
-		const processedVideoPaths = await Promise.all(
-			resolutions.map(videoScaler(videoPath))
-		)
 
-		await Promise.all(
-			processedVideoPaths.map((videoPath) =>
+		const uploads = []
+		for (const resolution of resolutions) {
+			const processedVideo = await videoScaler(videoPath)(resolution)
+
+			uploads.push(
 				client.fPutObject(
 					bucketToTransform,
-					`${path.dirname(objectPath)}/${path.basename(videoPath)}`,
-					videoPath,
+					`${path.dirname(objectPath)}/${path.basename(processedVideo)}`,
+					processedVideo,
 					{
 						'Content-Type': 'video/mp4'
 					}
 				)
 			)
-		)
+		}
+
+		await Promise.all(uploads)
 
 		return fs.rm(`${tempDir}/uploads`, { recursive: true, force: true })
 	}
